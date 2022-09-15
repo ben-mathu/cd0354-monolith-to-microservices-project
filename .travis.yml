@@ -27,3 +27,4 @@ after_success:
   - docker push ben-mathu/udagram-api-user:latest
   - docker push ben-mathu/udagram-api-feed:latest
   - docker push ben-mathu/udagram-frontend:latest
+  
