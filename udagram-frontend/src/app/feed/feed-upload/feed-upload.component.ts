@@ -39,14 +39,13 @@ export class FeedUploadComponent implements OnInit {
   }
 
   selectImage(event) {
-    const file = event.srcElement.files;
+    const files = event.target.files;
 
-    if (!file) {
+    if (!files) {
       return;
     }
-    this.file = file[0];
+    this.file = files[0];
     this.setPreviewDataUrl(this.file);
-
   }
 
   onSubmit($event) {

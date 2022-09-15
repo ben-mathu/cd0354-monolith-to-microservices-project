@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpRequest, HttpEvent } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 const API_HOST = environment.apiHost;
 
@@ -15,7 +16,7 @@ export class ApiService {
 
   token: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private dataPipe: DatePipe) {
   }
 
   static handleError(error: Error) {
@@ -55,7 +56,7 @@ export class ApiService {
   }
 
   async upload(endpoint: string, file: File, payload: any): Promise<any> {
-    const signed_url = (await this.get(`${endpoint}/signed-url/${file.name}`)).url;
+    const signed_url = (await this.get(`${endpoint}/signed-url/${this.dataPipe.transform(Date(), 'yyyyMMddHHmmssS')}_${file.name}`)).url;
 
     const headers = new HttpHeaders({'Content-Type': file.type});
     const req = new HttpRequest( 'PUT', signed_url, file,
@@ -65,7 +66,7 @@ export class ApiService {
                                   });
 
     return new Promise ( resolve => {
-        this.http.request(req).subscribe((resp) => {
+      this.http.request(req).subscribe((resp) => {
         if (resp && (<any> resp).status && (<any> resp).status === 200) {
           resolve(this.post(endpoint, payload));
         }

@@ -12,6 +12,7 @@ import { MenubarComponent } from './menubar/menubar.component';
 
 import { AuthModule } from './auth/auth.module';
 import { ApiService } from './api/api.service';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { ApiService } from './api/api.service';
     AuthModule
   ],
   providers: [
+    DatePipe,
     ApiService,
     StatusBar,
     SplashScreen,

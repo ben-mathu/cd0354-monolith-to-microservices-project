@@ -4,7 +4,6 @@ import {sequelize} from './sequelize';
 
 import {IndexRouter} from './controllers/v0/index.router';
 
-import bodyParser from 'body-parser';
 import {config} from './config/config';
 import {V0_FEED_MODELS, V0_USER_MODELS} from './controllers/v0/model.index';
 
@@ -19,7 +18,8 @@ import {V0_FEED_MODELS, V0_USER_MODELS} from './controllers/v0/model.index';
   const app = express();
   const port = process.env.PORT || 8080;
 
-  app.use(bodyParser.json());
+  app.use(express.urlencoded({extended: true}));
+  app.use(express.json()) // To parse the incoming requests with JSON payloads
 
   // We set the CORS origin to * so that we don't need to
   // worry about the complexities of CORS this lesson. It's
