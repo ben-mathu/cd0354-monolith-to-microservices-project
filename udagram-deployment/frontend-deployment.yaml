@@ -1,8 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: frontend
   name: frontend
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: frontend
@@ -13,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: benatt/udagram-frontend:v1.0.0
+        image: benatt/udagram-frontend:v1.0.1
         resources:
           limits:
             memory: "128Mi"

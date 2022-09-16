@@ -1,22 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user
+  labels:
+    app: backend-user
+  name: backend-user
 spec:
+  replicas: 2
   selector:
     matchLabels:
-      app: user
+      app: backend-user
   template:
     metadata:
       labels:
-        app: user
+        app: backend-user
     spec:
       containers:
       - name: user
-        image: benatt/udagram-api-user:latest
+        image: benatt/udagram-api-user:v1.0.0
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        envFrom:
+          - configMapRef:
+              name: env-configmap
+          - secretRef:
+              name: env-secret
         ports:
         - containerPort: 8080
