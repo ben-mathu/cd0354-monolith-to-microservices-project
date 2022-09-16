@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse
+spec:
+  selector:
+    matchLabels:
+      app: reverse
+  template:
+    metadata:
+      labels:
+        app: reverse
+    spec:
+      containers:
+      - name: reverse
+        image: benatt/reverseproxy:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
