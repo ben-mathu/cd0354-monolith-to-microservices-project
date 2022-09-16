@@ -50,7 +50,18 @@ router.get('/signed-url/:fileName',
     requireAuth,
     async (req: Request, res: Response) => {
       const {fileName} = req.params;
-      const url = AWS.getPutSignedUrl(fileName);
+      // const url = AWS.getPutSignedUrl(fileName);
+      const signedUrlExpireSeconds = 60 * 5;
+
+      const url = await AWS.s3.getSignedUrlPromise('putObject', {
+        Bucket: c.config.aws_media_bucket,
+        Key: fileName,
+        Expires: signedUrlExpireSeconds,
+      });
+      
+      console.log(fileName);
+      console.log(url);
+      console.log(c.config.aws_media_bucket);
       res.status(201).send({url: url});
     });
 
@@ -77,6 +88,7 @@ router.post('/',
       const savedItem = await item.save();
 
       savedItem.url = AWS.getGetSignedUrl(savedItem.url);
+      console.log(savedItem);
       res.status(201).send(savedItem);
     });
 

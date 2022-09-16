@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: backend-feed
-        image: benatt/udagram-api-feed:v1.0.2
+        image: benatt/udagram-api-feed:v1.0.8
         resources:
           requests:
             memory: "128Mi"
@@ -29,5 +29,16 @@ spec:
               name: env-configmap
           - secretRef:
               name: env-secret
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_secret_access_key
         ports:
         - containerPort: 8080

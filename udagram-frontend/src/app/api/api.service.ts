@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpRequest, HttpEvent } from '@angular/common
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
+import cors from 'cors';
 
 const API_HOST = environment.apiHost;
 
@@ -58,7 +59,9 @@ export class ApiService {
   async upload(endpoint: string, file: File, payload: any): Promise<any> {
     const signed_url = (await this.get(`${endpoint}/signed-url/${this.dataPipe.transform(Date(), 'yyyyMMddHHmmssS')}_${file.name}`)).url;
 
-    const headers = new HttpHeaders({'Content-Type': file.type});
+    const headers = new HttpHeaders({
+      'Content-Type': file.type
+    });
     const req = new HttpRequest( 'PUT', signed_url, file,
                                   {
                                     headers: headers,

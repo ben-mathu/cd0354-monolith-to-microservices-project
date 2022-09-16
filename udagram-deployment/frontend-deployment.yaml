@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: benatt/udagram-frontend:v1.0.1
+        image: benatt/udagram-frontend:v1.0.3
         resources:
           limits:
             memory: "128Mi"
