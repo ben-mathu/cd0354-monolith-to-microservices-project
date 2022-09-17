@@ -5,10 +5,11 @@ metadata:
     app: frontend
   name: frontend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
+  strategy: {}
   template:
     metadata:
       labels:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: benatt/udagram-frontend:v1.0.3
+        image: benatt/udagram-frontend:latest
         resources:
           limits:
             memory: "128Mi"

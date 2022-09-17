@@ -5,7 +5,7 @@ metadata:
     app: backend-user
   name: backend-user
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend-user
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user
-        image: benatt/udagram-api-user:v1.0.0
+        image: benatt/udagram-api-user:latest
         resources:
           limits:
             memory: "128Mi"
@@ -26,5 +26,16 @@ spec:
               name: env-configmap
           - secretRef:
               name: env-secret
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_secret_access_key
         ports:
         - containerPort: 8080

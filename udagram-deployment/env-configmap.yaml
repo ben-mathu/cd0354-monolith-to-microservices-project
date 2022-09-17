@@ -4,7 +4,7 @@ metadata:
   name: env-configmap
 
 data:
-  POSTGRES_HOST: udagrambenatt.czyscbs2oboq.us-east-1.rds.amazonaws.com
+  POSTGRES_HOST: 192.168.100.3
   POSTGRES_DB: postgres
   AWS_BUCKET: udagram-mathu-bucket
   AWS_REGION: us-east-1

@@ -5,7 +5,7 @@ metadata:
     app: backend-feed
   name: backend-feed
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend-feed
@@ -16,11 +16,8 @@ spec:
     spec:
       containers:
       - name: backend-feed
-        image: benatt/udagram-api-feed:v1.0.8
+        image: benatt/udagram-api-feed:latest
         resources:
-          requests:
-            memory: "128Mi"
-            cpu: "200m"
           limits:
             memory: "128Mi"
             cpu: "500m"
