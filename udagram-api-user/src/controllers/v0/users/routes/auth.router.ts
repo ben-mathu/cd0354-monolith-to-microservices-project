@@ -32,13 +32,18 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).send({message: 'No authorization headers.'});
   }
 
-  const tokenBearer = req.headers.authorization.split(' ');
-  if (tokenBearer.length != 2) {
+  if (!req.headers.authorization) {
+    return res.status(401).send({message: 'Malformed token.'});
+  }
+  
+  const tokenStr = req.headers.authorization;
+  // const tokenBearer = tokenStr.split(' ');
+  if (!tokenStr) {
     return res.status(401).send({message: 'Malformed token.'});
   }
 
-  const token = tokenBearer[1];
-  return jwt.verify(token, c.config.jwt.secret, (err, decoded) => {
+  // const token = tokenBearer[1];
+  return jwt.verify(tokenStr, c.config.jwt.secret, (err, decoded) => {
     if (err) {
       return res.status(500).send({auth: false, message: 'Failed to authenticate.'});
     }

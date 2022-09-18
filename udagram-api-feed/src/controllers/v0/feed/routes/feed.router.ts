@@ -4,6 +4,7 @@ import {NextFunction} from 'connect';
 import * as jwt from 'jsonwebtoken';
 import * as AWS from '../../../../aws';
 import * as c from '../../../../config/config';
+import { S3 } from 'aws-sdk';
 
 const router: Router = Router();
 
@@ -11,14 +12,20 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!req.headers || !req.headers.authorization) {
     return res.status(401).send({message: 'No authorization headers.'});
   }
-
-  const tokenBearer = req.headers.authorization.split(' ');
-  if (tokenBearer.length != 2) {
+  
+  if (req.headers.authorization == undefined) {
     return res.status(401).send({message: 'Malformed token.'});
   }
 
-  const token = tokenBearer[1];
-  return jwt.verify(token, c.config.jwt.secret, (err, decoded) => {
+  const tokenStr: string = req.headers.authorization;
+
+  // const tokenBearer: string[] = tokenStr.split(' ');
+  if (!tokenStr) {
+    return res.status(401).send({message: 'Malformed token.'});
+  }
+
+  // const token: string = tokenBearer[1];
+  return jwt.verify(tokenStr, c.config.jwt.secret, (err, decoded) => {
     if (err) {
       return res.status(500).send({auth: false, message: 'Failed to authenticate.'});
     }
@@ -29,9 +36,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 // Get all feed items
 router.get('/', async (req: Request, res: Response) => {
   const items = await FeedItem.findAndCountAll({order: [['id', 'DESC']]});
-  items.rows.map((item) => {
+  items.rows.map(async (item) => {
     if (item.url) {
-      item.url = AWS.getGetSignedUrl(item.url);
+      item.url = await AWS.getGetSignedUrlPromise(item.url);
     }
   });
   res.send(items);
@@ -51,17 +58,12 @@ router.get('/signed-url/:fileName',
     async (req: Request, res: Response) => {
       const {fileName} = req.params;
       // const url = AWS.getPutSignedUrl(fileName);
-      const signedUrlExpireSeconds = 60 * 5;
 
-      const url = await AWS.s3.getSignedUrlPromise('putObject', {
-        Bucket: c.config.aws_media_bucket,
-        Key: fileName,
-        Expires: signedUrlExpireSeconds,
-      });
-      
-      console.log(fileName);
-      console.log(url);
-      console.log(c.config.aws_media_bucket);
+      const url = await AWS.getPutSignedUrlPromise(fileName);
+      //   Bucket: c.config.aws_media_bucket,
+      //   Key: fileName,
+      //   Expires: signedUrlExpireSeconds,
+      // });
       res.status(201).send({url: url});
     });
 
@@ -87,7 +89,7 @@ router.post('/',
 
       const savedItem = await item.save();
 
-      savedItem.url = AWS.getGetSignedUrl(savedItem.url);
+      savedItem.url = await AWS.getGetSignedUrlPromise(savedItem.url);
       console.log(savedItem);
       res.status(201).send(savedItem);
     });

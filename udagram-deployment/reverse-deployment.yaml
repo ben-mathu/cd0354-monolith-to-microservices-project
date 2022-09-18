@@ -21,5 +21,21 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        envFrom:
+          - configMapRef:
+              name: env-configmap
+          - secretRef:
+              name: env-secret
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_access_key_id
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: aws_secret_access_key
         ports:
         - containerPort: 8080
