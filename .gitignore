@@ -44,3 +44,5 @@ venv/
 set_env.sh
 udagram-api-feed/src/controllers/v0/feed/routes/uploads/*
 udagram-api/src/controllers/v0/feed/routes/uploads/*
+
+udagram-deployment

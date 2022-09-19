@@ -37,13 +37,13 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
   
   const tokenStr = req.headers.authorization;
-  // const tokenBearer = tokenStr.split(' ');
-  if (!tokenStr) {
+  const tokenBearer = tokenStr.split(' ');
+  if (tokenBearer.length != 2) {
     return res.status(401).send({message: 'Malformed token.'});
   }
 
-  // const token = tokenBearer[1];
-  return jwt.verify(tokenStr, c.config.jwt.secret, (err, decoded) => {
+  const token = tokenBearer[1];
+  return jwt.verify(token, c.config.jwt.secret, (err, decoded) => {
     if (err) {
       return res.status(500).send({auth: false, message: 'Failed to authenticate.'});
     }
