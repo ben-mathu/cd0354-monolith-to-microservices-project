@@ -13,19 +13,16 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).send({message: 'No authorization headers.'});
   }
   
-  if (req.headers.authorization == undefined) {
+  if (req.headers.authorization === undefined) {
     return res.status(401).send({message: 'Malformed token.'});
   }
 
-  const tokenStr: string = req.headers.authorization;
-
-  const tokenBearer: string[] = tokenStr.split(' ');
+  const tokenBearer: string[] = req.headers.authorization.split(' ');
   if (tokenBearer.length != 2) {
     return res.status(401).send({message: 'Malformed token.'});
   }
 
-  const token: string = tokenBearer[1];
-  return jwt.verify(token, c.config.jwt.secret, (err, decoded) => {
+  return jwt.verify(tokenBearer[1], c.config.jwt.secret, (err, decoded) => {
     if (err) {
       return res.status(500).send({auth: false, message: 'Failed to authenticate.'});
     }
@@ -55,16 +52,20 @@ router.get('/:id',
 // Get a signed url to put a new item in the bucket
 router.get('/signed-url/:fileName',
     requireAuth,
-    async (req: Request, res: Response) => {
+    (req: Request, res: Response) => {
       const {fileName} = req.params;
       // const url = AWS.getPutSignedUrl(fileName);
 
-      const url = await AWS.getPutSignedUrlPromise(fileName);
-      //   Bucket: c.config.aws_media_bucket,
-      //   Key: fileName,
-      //   Expires: signedUrlExpireSeconds,
-      // });
-      res.status(201).send({url: url});
+      AWS.getPutSignedUrlPromise(fileName)
+        .then((url: string) => {
+            res.status(201).send({url: url});
+          }).catch((error) => {
+              console.log(error);
+              res.status(400).send({message: 'Error  while retrieving the URL.'});
+            });
+          
+        // const url = AWS.getGetSignedUrl(fileName);
+        // res.status(201).send({url: url});
     });
 
 // Create feed with metadata
@@ -88,6 +89,7 @@ router.post('/',
       });
 
       const savedItem = await item.save();
+      console.log(savedItem);
 
       savedItem.url = await AWS.getGetSignedUrlPromise(savedItem.url);
       console.log(savedItem);

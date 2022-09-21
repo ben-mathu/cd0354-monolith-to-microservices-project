@@ -57,7 +57,6 @@ export class ApiService {
   }
 
   async upload(endpoint: string, file: File, payload: any): Promise<any> {
-    console.log(this.httpOptions.headers);
     const signed_url = (await this.get(`${endpoint}/signed-url/${this.dataPipe.transform(Date(), 'yyyyMMddHHmmssS')}_${file.name}`)).url;
 
     const headers = new HttpHeaders({
